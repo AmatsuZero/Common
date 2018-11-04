@@ -1,0 +1,28 @@
+PODS:
+  - BlueSocket (1.0.24)
+  - BlueSSLService (1.0.24):
+    - BlueSocket (~> 1.0.24)
+  - Common (0.1.0):
+    - BlueSocket
+    - BlueSSLService
+
+DEPENDENCIES:
+  - Common (from `../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - BlueSocket
+    - BlueSSLService
+
+EXTERNAL SOURCES:
+  Common:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  BlueSocket: b0220a1726c0d9b480b68950bd336b5273565cb4
+  BlueSSLService: fc1413d72e2f04cd9175ada5c73fd6299358d55f
+  Common: dd6928bd64d7039d1eeaced7d774c37735a12423
+
+PODFILE CHECKSUM: 695a072c264443ad44acba8d43eac9392acc1c6b
+
+COCOAPODS: 1.6.0.beta.2
