@@ -10,7 +10,9 @@ import Foundation
 
 public class BitStreamOut: OutputStream {
    
-    
+    func test() {
+       
+    }
 }
 
 public class BitStreamIn: InputStream {

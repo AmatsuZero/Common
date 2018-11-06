@@ -18,9 +18,11 @@ public class SocketWrapper {
     }
     typealias AddressInfo = (host: String, port: Int32)
     private(set) var serverAddressInfo: AddressInfo?
-    var clientAddress: AddressInfo {
-        return (socket.remoteHostname, socket.listeningPort)
-    }
+    
+    private(set) lazy var port: SocketPort? = {
+        return SocketPort(remoteWithTCPPort: UInt16(socket.remotePort),
+                          host: socket.remoteHostname)
+    }()
     
     init(type: SocketType) throws {
         switch type {
@@ -55,9 +57,8 @@ public class SocketWrapper {
         try socket.write(from: data)
     }
     
-    func receive(bufferSize: Int = 4096) throws -> String? {
-        var buff = [CChar]()
-        _ = try socket.read(into: &buff, bufSize: bufferSize, truncate: true)
-        return String(cString: &buff)
+    @discardableResult
+    func receive(data: inout Data) throws -> Int {
+        return try socket.read(into: &data)
     }
 }

@@ -145,3 +145,23 @@ extension ClosedRange where Element: Equatable {
         return false
     }
 }
+
+extension String {
+    
+    func slice(from: Int, to: Int) -> String {
+        let start = index(startIndex, offsetBy: from)
+        let end = index(startIndex, offsetBy: to)
+        return String(self[start..<end])
+    }
+}
+
+extension Data {
+    
+    func applyMask(key: Data) -> Data {
+        var bytes = [UInt8]()
+        for (i, v) in self.enumerated() {
+            bytes.append(v ^ key[i % 4])
+        }
+        return Data(bytes: bytes)
+    }
+}
