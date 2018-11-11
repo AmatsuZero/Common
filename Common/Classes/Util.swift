@@ -221,3 +221,21 @@ public extension String {
         return hmacData.base64EncodedString(options: .lineLength76Characters)
     }
 }
+
+extension StringProtocol {
+    var ascii: [UInt32] {
+        return unicodeScalars.compactMap { $0.isASCII ? $0.value : nil }
+    }
+}
+extension Character {
+    var ascii: UInt32? {
+        return String(self).ascii.first
+    }
+    
+    func unicodeScalarCodePoint() -> UInt32 {
+        let characterString = String(self)
+        let scalars = characterString.unicodeScalars
+        return scalars[scalars.startIndex].value
+    }
+}
+

@@ -55,6 +55,10 @@ public class WebSocket {
     private var buffer = Data()
     private var fragments = Data()
     private var packets = [UInt8]()
+    var serverAddress: SocketWrapper.AddressInfo? {
+        return socket?.serverAddressInfo
+    }
+    
     
     func connect(host: String, port p: Int32? = nil, timeout: UInt = 3) throws {
         guard state == .disconnect else {

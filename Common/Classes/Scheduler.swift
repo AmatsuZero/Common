@@ -57,8 +57,8 @@ class SocketEvent {
             repeat {
                 shouldKeepRunning = handler(socket)
             } while shouldKeepRunning
+            self.removeEvents()
         }
-        
         print("Socket: \(socket.socket.remoteHostname):\(socket.socket.remotePort) closed...")
         socket.close()
         
