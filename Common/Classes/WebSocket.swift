@@ -8,7 +8,7 @@
 import Foundation
 import Socket
 
-public class WebSocket {
+open class WebSocket {
     
     enum ConnectionState: Int {
         case disconnect = 0, connecting, connected

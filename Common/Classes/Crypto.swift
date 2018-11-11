@@ -13,12 +13,13 @@ public struct RC4 {
     private var I: UInt8 = 0
     private var J: UInt8 = 0
     
-    init() {
+    public init(key: [UInt8]) {
         State = [UInt8](repeating: 0, count: 256)
+        initialize(key)
     }
     
     mutating
-    func initialize(_ Key: [UInt8]) {
+    private func initialize(_ Key: [UInt8]) {
         for i in 0..<256 {
             State[i] = UInt8(i)
         }
@@ -49,7 +50,7 @@ public struct RC4 {
     }
     
     mutating
-    func encrypt(_ Data: inout [UInt8]) {
+    public func encrypt(_ Data: inout [UInt8]) {
         let cnt = Data.count
         for i in 0..<cnt {
             Data[i] = Data[i] ^ next()

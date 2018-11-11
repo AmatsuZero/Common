@@ -23,7 +23,7 @@ extension UInt32 {
 }
 
 // CRC16
-public extension Array where Element == UInt8  {
+extension Array where Element == UInt8  {
     
     /// Seed, You should change this seed.
     private static let gPloy = 0x1000
@@ -46,7 +46,7 @@ public extension Array where Element == UInt8  {
         return (0..<256).map(getCrcOfByte)
     }()
     
-    func getCRC16Result() -> [UInt8] {
+    public func getCRC16Result() -> [UInt8] {
         var crc = getCrc()
         var crcArr: [UInt8] = [0,0]
         for i in (0..<2).reversed() {
@@ -71,7 +71,7 @@ public extension Array where Element == UInt8  {
 
 extension String {
     
-    func toIpAddress(useBigEndian: Bool = true) throws -> UInt32 {
+    public func toIpAddress(useBigEndian: Bool = true) throws -> UInt32 {
         var addr = in_addr()
         guard inet_pton(AF_INET, self, &addr) == 1 else {
             throw NSError(domain: "com.dabuert.nintendoclients.Common",
@@ -81,14 +81,14 @@ extension String {
         return useBigEndian ? addr.s_addr.bigEndian : addr.s_addr
     }
     
-    func getCrc16(encodeing: String.Encoding = .utf8) -> [UInt8]? {
+    public func getCrc16(encodeing: String.Encoding = .utf8) -> [UInt8]? {
         guard let data = self.data(using: encodeing) else {
             return nil
         }
         return [UInt8](data).getCRC16Result()
     }
     
-    func crc16() -> Int {
+    public func crc16() -> Int {
         var hash:Int = 0
         for char in self.utf8CString {
             for _ in 0..<8 {
@@ -103,7 +103,7 @@ extension String {
         return hash
     }
     
-    func ipToHex() throws -> [Any] {
+    public func ipToHex() throws -> [Any] {
         let ip = try toIpAddress()
         return try ">I".unpack(data: .init(from: ip))
     }
@@ -158,7 +158,7 @@ extension String {
 
 extension Data {
     
-    func applyMask(key: Data) -> Data {
+    public func applyMask(key: Data) -> Data {
         var bytes = [UInt8]()
         for (i, v) in self.enumerated() {
             bytes.append(v ^ key[i % 4])
@@ -168,8 +168,8 @@ extension Data {
 }
 
 // MARK: - HMAC
-public extension String {
-    enum HMACAlgorithm {
+extension String {
+    public enum HMACAlgorithm {
         case MD5, SHA1, SHA224, SHA256, SHA384, SHA512
         
         func toCCHmacAlgorithm() -> CCHmacAlgorithm {
@@ -211,7 +211,7 @@ public extension String {
         }
     }
     
-    func hmac(algorithm: HMACAlgorithm, key: String) -> String {
+    public func hmac(algorithm: HMACAlgorithm, key: String) -> String {
         let cKey = key.cString(using: .utf8)
         let cData = cString(using: .utf8)
         var result = [CUnsignedChar](repeating: 0, count: algorithm.digestLength)
@@ -223,16 +223,17 @@ public extension String {
 }
 
 extension StringProtocol {
-    var ascii: [UInt32] {
+    public var ascii: [UInt32] {
         return unicodeScalars.compactMap { $0.isASCII ? $0.value : nil }
     }
 }
-extension Character {
-    var ascii: UInt32? {
+
+public extension Character {
+    public var ascii: UInt32? {
         return String(self).ascii.first
     }
     
-    func unicodeScalarCodePoint() -> UInt32 {
+    public func unicodeScalarCodePoint() -> UInt32 {
         let characterString = String(self)
         let scalars = characterString.unicodeScalars
         return scalars[scalars.startIndex].value

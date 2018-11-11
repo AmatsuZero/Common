@@ -15,12 +15,12 @@ public class StreamOut {
     fileprivate var pos = 0
     fileprivate var stack = [Any]()
     
-    var size: Int { return data.count }
-    var isEof: Bool {
+    public var size: Int { return data.count }
+    public var isEof: Bool {
         return pos >= data.count
     }
     
-    init(endian: String = "<") {
+    public init(endian: String = "<") {
         self.endian = endian
     }
     
@@ -28,93 +28,93 @@ public class StreamOut {
         stack.append(pos)
     }
     
-    func pop() {
+    public func pop() {
         if let last = stack.popLast() as? Int {
             pos = last
         }
     }
     
-    func write(_ data: Data) {
+    public func write(_ data: Data) {
         self.data[Int(pos)..<(Int(pos) + data.count)] = data
         pos += data.count
     }
     
-    func seek(pos: Int) {
+    public func seek(pos: Int) {
         if pos > data.count {
             pad(num: data.count - pos)
         }
         self.pos = pos
     }
     
-    func pad(num: Int, char:String = "\0") {
+    public func pad(num: Int, char:String = "\0") {
         if let append = String(repeating: char, count: num).data(using: .ascii) {
             data += append
         }
     }
     
-    func ascii(_ data: String) {
+    public func ascii(_ data: String) {
         if let append = data.data(using: .ascii) {
             self.data += append
         }
     }
     
-    func tell() -> Int {
+    public func tell() -> Int {
         return pos
     }
     
-    func get() -> Data {
+    public func get() -> Data {
         return data
     }
     
-    func skip(num: Int) {
+    public func skip(num: Int) {
         seek(pos: Int(pos) + num)
     }
     
-    func align(num: Int) {
+    public func align(num: Int) {
         skip(num: (num - Int(pos) % num) % num)
     }
     
-    func u8(_ value: UInt8) {
+    public func u8(_ value: UInt8) {
         write(.init(repeating: value, count: 1))
     }
     
-    func u16(_ value: Any) {
+    public func u16(_ value: Any) {
         pack(format: "\(endian)H", value: [value])
     }
     
-    func u32(_ value: Any) {
+    public func u32(_ value: Any) {
         pack(format: "\(endian)I", value: [value])
     }
     
-    func u64(_ value: Any) {
+    public func u64(_ value: Any) {
         pack(format: "\(endian)Q", value: [value])
     }
     
-    func s8(_ value: Any) {
+    public func s8(_ value: Any) {
         pack(format: "b", value: [value])
     }
     
-    func s16(_ value: Any) {
+    public func s16(_ value: Any) {
         pack(format: "\(endian)h", value: [value])
     }
     
-    func s32(_ value: Any) {
+    public func s32(_ value: Any) {
         pack(format: "\(endian)i", value: [value])
     }
     
-    func s64(_ value: Any) {
+    public func s64(_ value: Any) {
         pack(format: "\(endian)q", value: [value])
     }
     
-    func float(_ value: Any) {
+    public func float(_ value: Any) {
         pack(format: "\(endian)f", value: [value])
     }
     
-    func double(_ value: Any) {
+    public func double(_ value: Any) {
         pack(format: "\(endian)d", value: [value])
     }
     
-    func bool(_ value: Any) {
+    public func bool(_ value: Any) {
         if value is Bool {
             u8(1)
         } else {
@@ -122,19 +122,19 @@ public class StreamOut {
         }
     }
     
-    func char(_ value: Character) {
+    public func char(_ value: Character) {
         u8(UInt8(value.unicodeScalarCodePoint()))
     }
     
-    func wchar(_ value: Character) {
+    public func wchar(_ value: Character) {
         u16(value.unicodeScalarCodePoint())
     }
     
-    func chars(_ value: String) {
+    public func chars(_ value: String) {
         value.forEach { self.char($0) }
     }
     
-    func wchars(_ value: String) {
+    public func wchars(_ value: String) {
         value.forEach { self.wchar($0) }
     }
     
@@ -145,42 +145,42 @@ public class StreamOut {
     }
 }
 
-public class StreamIn {
+open class StreamIn {
     
     let endian: String
     fileprivate var data = Data()
     fileprivate var pos = 0
     fileprivate var stack = [Any]()
     
-    init(endian: String = "<") {
+    public init(endian: String = "<") {
         self.endian = endian
     }
     
-    var isEof: Bool {
+    public var isEof: Bool {
         return pos >= data.count
     }
     
-    var available: Int {
+    public var available: Int {
         return data.count - pos
     }
     
-    func seek(pos: Int) {
+    public func seek(pos: Int) {
         self.pos = pos
     }
     
-    func skip(num: Int) {
+    public func skip(num: Int) {
         pos += num
     }
     
-    func align(num: Int) {
+    public func align(num: Int) {
         pos += ((num - pos % num) % num)
     }
     
-    func tell() -> Int {
+    public func tell() -> Int {
         return pos
     }
     
-    func pad(num: Int, char: String = "\0") throws {
+    public func pad(num: Int, char: String = "\0") throws {
         if let value = String(repeating: char, count: num).data(using: .ascii),
             value != read(num: num) {
             throw NSError(domain: "com.dabuert.nintendoclients.Common.CStruct",
@@ -189,41 +189,41 @@ public class StreamIn {
         }
     }
     
-    func ascii(_ num: Int) -> String? {
+    public func ascii(_ num: Int) -> String? {
         return String(data: read(num: num), encoding: .ascii)
     }
     
-    @discardableResult func read(num: Int) -> Data {
+    @discardableResult public func read(num: Int) -> Data {
         data = data[pos..<(pos + num)]
         pos += num
         return data
     }
     
-    func u8() -> UInt8 {
+    public func u8() -> UInt8 {
         return read(num: 1)[0]
     }
     
-    func u16() -> UInt16? {
+    public func u16() -> UInt16? {
         return try! "\(endian)H".unpack(data: read(num: 2))[0] as? UInt16
     }
     
-    func u32() -> UInt32? {
+    public func u32() -> UInt32? {
         return try! "\(endian)I".unpack(data: read(num: 4))[0] as? UInt32
     }
     
-    func u64() -> UInt64? {
+    public func u64() -> UInt64? {
         return try! "\(endian)Q".unpack(data: read(num: 8))[0] as? UInt64
     }
     
-    func float() -> Float? {
+    public func float() -> Float? {
         return try! "\(endian)f".unpack(data: read(num: 4))[0] as? Float
     }
     
-    func double() -> Double? {
+    public func double() -> Double? {
         return try! "\(endian)d".unpack(data: read(num: 8))[0] as? Double
     }
     
-    func bool() -> Bool? {
+    public func bool() -> Bool? {
         return NSNumber(value: u8()).boolValue
     }
     
@@ -231,20 +231,20 @@ public class StreamIn {
         return Character(.init(u8()))
     }
     
-    func wchar() -> Character? {
+    public func wchar() -> Character? {
         if let value = u16() {
             return Character(.init(value))
         }
         return nil
     }
     
-    func chars(_ num: Int) -> String {
+    public func chars(_ num: Int) -> String {
         return (0..<num)
             .map { _ in String(self.char()) }
             .reduce("", { $0 + $1 })
     }
     
-    func wchar(_ num: Int) -> String {
+    public func wchar(_ num: Int) -> String {
         return (0..<num)
             .map { _ in self.wchar() }
             .compactMap { $0 }
@@ -260,7 +260,7 @@ public class BitStreamOut: StreamOut {
         stack.append((bitPos, pos))
     }
     
-    override func pop() {
+    override public func pop() {
         if let (pos, bitOps) = self.stack.popLast() as? (Int, Int) {
             self.pos = pos
             self.bitPos = bitOps
@@ -283,7 +283,7 @@ public class BitStreamOut: StreamOut {
         self.bitPos = 0
     }
     
-    override func align(num: Int) {
+    override public func align(num: Int) {
         byteAlign()
         super.align(num: num)
     }
@@ -313,7 +313,7 @@ public class BitStreamOut: StreamOut {
         }
     }
     
-    override func write(_ data: Data) {
+    override public func write(_ data: Data) {
         if bitPos == 0 {
             super.write(data)
         } else {
@@ -349,7 +349,7 @@ public class BitStreamIn: StreamIn {
         }
     }
     
-    override func align(num: Int) {
+    override public func align(num: Int) {
         bytealign()
         super.align(num: num)
     }
@@ -373,7 +373,7 @@ public class BitStreamIn: StreamIn {
         return value
     }
     
-    override func read(num: Int) -> Data {
+    override public func read(num: Int) -> Data {
         if bitPos == 0 {
             return super.read(num: num)
         } else {

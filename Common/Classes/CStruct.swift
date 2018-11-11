@@ -98,7 +98,7 @@ extension String {
         public static var errorDomain: String {
             return "com.dabuert.nintendoclients.Common.CStruct"
         }
-        var errorCode: Int {
+        public var errorCode: Int {
             switch self {
             case .parsing: return -1
             case .packing: return -2
@@ -106,7 +106,7 @@ extension String {
             }
         }
         
-        var errorUserInfo: [String : Any] {
+        public var errorUserInfo: [String : Any] {
             switch self {
             case .parsing(let msg), .packing(let msg), .unpacking(let msg):
                 return [NSLocalizedDescriptionKey: msg]
@@ -165,7 +165,7 @@ extension String {
         }
     }
     
-    func unpack(data: Data) throws -> [Any] {
+    public func unpack(data: Data) throws -> [Any] {
         let opStream = try parse()
         var values = [Any]()
         var index = 0
@@ -252,7 +252,7 @@ extension String {
         return values
     }
     
-    func pack(values: [Any]) throws -> Data {
+    public func pack(values: [Any]) throws -> Data {
         let ops = try parse()
         var bytes = [UInt8]()
         var index = 0

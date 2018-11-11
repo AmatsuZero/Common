@@ -8,7 +8,7 @@
 import Foundation
 import Socket
 
-class SocketEvent {
+open class SocketEvent {
     
     static let shared = SocketEvent()
     

@@ -10,7 +10,7 @@ import Foundation
 import Socket
 import SSLService
 
-public class SocketWrapper {
+open class SocketWrapper {
     
     let socket: Socket
     enum SocketType: Int {
